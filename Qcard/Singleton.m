@@ -6,6 +6,8 @@
 //  Copyright (c) 2012 __MyCompanyName__. All rights reserved.
 //
 
+//This is a class that can ONLY have one instance throughout the program
+
 #import "Singleton.h"
 
 @interface Singleton ()
@@ -29,6 +31,18 @@ static Singleton *globalVar= nil;
 @synthesize initialWords;
 @synthesize easyWords;
 @synthesize skippedWords;
+@synthesize troubledAnswers;
+@synthesize initialAnswers;
+@synthesize skippedAnswers;
+
+@synthesize elements;
+@synthesize array_index;
+
+@synthesize initial_round;
+@synthesize skipped_round;
+@synthesize incorrect_round;
+
+@synthesize serverName;
 
 #pragma mark -
 #pragma mark Singleton Methods
