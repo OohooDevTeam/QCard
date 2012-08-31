@@ -1,0 +1,11 @@
+App:
+    QCard
+    
+Description:
+    This app allows students to practice learning new words from their course exercises which have been uploaded by professor.
+
+Prequisites:
+    Need professors to install qcardloader and upload files 
+
+Installation:
+    Download from the App Store
