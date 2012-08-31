@@ -478,7 +478,6 @@
                                 </state>
                                 <connections>
                                     <action selector="Pass:" destination="2" eventType="touchUpInside" id="Ej7-VX-yxK"/>
-                                    <action selector="Pass:" destination="2" eventType="touchUpOutside" id="dd4-Fn-9sm"/>
                                 </connections>
                             </button>
                             <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumFontSize="10" id="mnT-Mo-4PK" userLabel="Label - Correctness">

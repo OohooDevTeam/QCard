@@ -1,10 +1,16 @@
-//
-//  AnswerViewController.m
-//  Qcard
-//
-//  Created by Theodore Pham on 12-03-23.
-//  Copyright (c) 2012 __MyCompanyName__. All rights reserved.
-//
+/**
+ **************************************************************************
+ **                              QCard                                   **
+ **************************************************************************
+ * @package     app                                                      **
+ * @subpackage  N/A                                                      **
+ * @name        QCard                                                    **
+ * @copyright   oohoo.biz                                                **
+ * @link        http://oohoo.biz                                         **
+ * @author      Theodore Pham                                            **
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later **
+ **************************************************************************
+ **************************************************************************/
 
 #import "AnswerViewController.h"
 #import "Singleton.h"
@@ -38,8 +44,8 @@
     // Do any additional setup after loading the view from its nib.
     
     id str;
-    NSLog(@"GLBOALLLLLLL INDEX %d", global.index);
     
+    //Checks if the start round is over
     if(global.initial_round != TRUE){
         //Grabs the value at specified index in array
         str = [global.initialAnswers objectAtIndex: global.index];
@@ -48,32 +54,8 @@
         str = [global.skippedAnswers objectAtIndex: global.index];
     }
     
+    //Display answer for the respective words
     lblANSWER.text = [NSString stringWithFormat:@"%@", str];
-
-    ////////////////////////////////////////////////////////
-    
-//    NSURL *url = [NSURL fileURLWithPath:[[NSBundle mainBundle]pathForResource:@"goodbye" ofType:@"mp3"]];
-    
-//    NSString *url = [[NSBundle mainBundle] pathForResource:[[global.answerArray objectAtIndex: global.index] lowercaseString] ofType:@"mp3"];
-//    NSString *path = [[NSBundle mainBundle] pathForResource:[[global.answerArray objectAtIndex: global.index] lowercaseString] ofType:@"mp3"];
-
-    //BROKEN
-//    NSString *path = [[NSBundle mainBundle] pathForResource:[[global.answerArray objectAtIndex: global.index] lowercaseString] ofType:@"mp3"];
-//    NSURL *url = [NSURL fileURLWithPath:path];
-//
-//    
-//    NSError *error;
-//    audioPlayer = [[AVAudioPlayer alloc]
-//                   initWithContentsOfURL:url
-//                   error:&error];
-//    if (error)
-//    {
-//        NSLog(@"Error in audioPlayer: %@", 
-//              [error localizedDescription]);
-//    } else {
-//        audioPlayer.delegate = self;
-//        [audioPlayer prepareToPlay];
-//    }
 }
 
 - (void)viewDidUnload

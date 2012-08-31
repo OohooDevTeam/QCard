@@ -1,13 +1,18 @@
-//
-//  Singleton.m
-//  Qcard
-//
-//  Created by Theodore Pham on 12-04-02.
-//  Copyright (c) 2012 __MyCompanyName__. All rights reserved.
-//
+/**
+ **************************************************************************
+ **                              QCard                                   **
+ **************************************************************************
+ * @package     app                                                      **
+ * @subpackage  N/A                                                      **
+ * @name        QCard                                                    **
+ * @copyright   oohoo.biz                                                **
+ * @link        http://oohoo.biz                                         **
+ * @author      Theodore Pham                                            **
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later **
+ **************************************************************************
+ **************************************************************************/
 
 //This is a class that can ONLY have one instance throughout the program
-
 #import "Singleton.h"
 
 @interface Singleton ()
@@ -20,13 +25,10 @@ static Singleton *globalVar= nil;
 
 @synthesize answerArray;
 @synthesize index;
-//@synthesize wrongAnswer;
 
 @synthesize courseName;
 @synthesize files;
 
-//@synthesize EF_prime;
-//@synthesize EF;
 @synthesize troubledWords;
 @synthesize initialWords;
 @synthesize easyWords;
@@ -52,26 +54,5 @@ static Singleton *globalVar= nil;
     }
     return globalVar;
 }
-
-
-/*
-+ (id)allocWithZone:(NSZone *)zone {
-    return [[self sharedManager] retain];
-}
-- (id)copyWithZone:(NSZone *)zone {
-    return self;
-}
-- (id)retain {
-    return self;
-}
-- (unsigned)retainCount {
-    return NSUIntegerMax;
-}
-- (void)release {
-    //do nothing
-}
-- (id)autorelease {
-    return self;
-}*/
 
 @end

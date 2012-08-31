@@ -1,10 +1,16 @@
-//
-//  ViewController.h
-//  Qcard
-//
-//  Created by Theodore Pham on 12-03-21.
-//  Copyright (c) 2012 __MyCompanyName__. All rights reserved.
-//
+/**
+ **************************************************************************
+ **                              QCard                                   **
+ **************************************************************************
+ * @package     app                                                      **
+ * @subpackage  N/A                                                      **
+ * @name        QCard                                                    **
+ * @copyright   oohoo.biz                                                **
+ * @link        http://oohoo.biz                                         **
+ * @author      Theodore Pham                                            **
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later **
+ **************************************************************************
+ **************************************************************************/
 
 //  ViewController.h
 //  OpenEarsSampleApp
@@ -79,7 +85,6 @@
     int x;
     int k;
     
-    
     double x_wrong;
 	double x_right;
     
@@ -134,10 +139,12 @@
 	// Our NSTimer that will help us read and display the input and output levels without locking the UI
 	NSTimer *uiUpdateTimer;
     
+    // Views for the 3 blank images for incorrect answers
     IBOutlet UIImageView * imageView1;
     IBOutlet UIImageView * imageView2;
     IBOutlet UIImageView * imageView3;
     
+    // Bools for pausing and voice enabling/disabling
     BOOL isPaused;
     BOOL isEnabled;
     
@@ -159,12 +166,10 @@
 - (IBAction) switch2answer;
 
 // Example for reading out the input audio levels without locking the UI using an NSTimer
-
 - (void) startDisplayingLevels;
 - (void) stopDisplayingLevels;
 
 // These three are the important OpenEars objects that this class demonstrates the use of.
-
 @property (nonatomic, strong) OpenEarsEventsObserver *openEarsEventsObserver;
 @property (nonatomic, strong) PocketsphinxController *pocketsphinxController;
 @property (nonatomic, strong) FliteController *fliteController;

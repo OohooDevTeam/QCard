@@ -1,13 +1,21 @@
-//
-//  AuthenticateViewController.m
-//  Qcard
-//
-//  Created by Theodore Pham on 12-05-29.
-//  Copyright (c) 2012 __MyCompanyName__. All rights reserved.
-//
+/**
+ **************************************************************************
+ **                              QCard                                   **
+ **************************************************************************
+ * @package     app                                                      **
+ * @subpackage  N/A                                                      **
+ * @name        QCard                                                    **
+ * @copyright   oohoo.biz                                                **
+ * @link        http://oohoo.biz                                         **
+ * @author      Theodore Pham                                            **
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later **
+ **************************************************************************
+ **************************************************************************/
+
 
 #import "AuthenticateViewController.h"
 #import "Singleton.h"
+/*https://github.com/matej/MBProgressHUD*/
 #import "MBProgressHUD.h"
 
 @interface NSURLRequest (DummyInterface)
@@ -28,8 +36,6 @@
 @synthesize recoverpass;
 @synthesize checkBox;
 @synthesize isChecked;
-//@synthesize loader;
-//@synthesize webData;
 
 /******************************************/
 
@@ -64,6 +70,7 @@
     
     NetworkStatus remoteHostStatus = [wifi currentReachabilityStatus];
     
+    //Checks for wifi connection
     if (remoteHostStatus == ReachableViaWiFi) {
         NSLog(@"wifi");
     } else {
@@ -74,7 +81,7 @@
     }
     
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    
+    //Stores default values so it can be loaded next time
     NSString *usernameField = [defaults objectForKey:@"username"];
     NSString *passwordField = [defaults objectForKey:@"password"];
     NSString *servernameField = [defaults objectForKey:@"server"];
@@ -103,10 +110,13 @@
     return YES;
 }
 
-
+/**
+ * Function that sets the checkbox image as checked or blank depending on the user 
+ * if they have touched the box or not
+ **/
 - (IBAction) checkBox: (id) sender{
     if (isChecked == 1){
-        
+    
         [checkBox setImage:[UIImage imageNamed:@"blank.png"] forState:UIControlStateNormal];
         [checkBox setSelected: NO];
         isChecked = 0;
@@ -118,27 +128,16 @@
         [checkBox setSelected : YES];
         isChecked = 1;
         NSLog(@"Checked");
-
         
-        /*
-        NSString *usernameField = [username  text];
-        NSString *passwordField = [password text];
-        NSString *serverField = [servername text];
-        
-        NSUserDefaults *defaultData = [NSUserDefaults standardUserDefaults];
-        
-        [defaultData setObject:usernameField forKey:@"username"];
-        [defaultData setObject:passwordField forKey:@"password"];
-        [defaultData setObject:serverField forKey:@"server"];
-        
-        [defaultData synchronize];
-         */
     }
 }
 
 
 
 //Checks if the username and password is valid
+/**
+ * Validates the users authentication information
+ **/
 - (IBAction) authenticate:(id)sender
 {
     Singleton *global = [Singleton globalVar];
@@ -180,12 +179,7 @@
             
             //www.cocoanetics.com/2009/11/ignoring-certificate-errors-on-nsurlrequest
             //passes the username and password to the server php pages to check valid user
-            //NSString *url = [NSString stringWithFormat:@"https://129.128.136.143/moodle/local/phpFile.php?user=%@&pass=%@", username.text, password.text];  // server name does not match
-            
             NSString *url = [NSString stringWithFormat:@"https://%@/moodle/mod/qcardloader/infoControl.php?user=%@&pass=%@&request=app", servername.text, username.text, password.text];  // server name does not match
-            
-            //NSString *url = [NSString stringWithFormat:@"https://%@/moodle/local/qcardloader/phpFile.php?user=%@&pass=%@", servername.text, username.text, password.text];  // server name does not match
-
 
             NSURL *URL = [NSURL URLWithString:url];
             NSString *course;
@@ -210,9 +204,8 @@
             {
                 NSLog(@"%@", [error localizedDescription]);
                 NSLog(@"Could not connect to server");
-                [self message:@"COuld not connect to server"];
+                [self message:@"Could not connect to server"];
 
-                
                 //Hide Loader
                 [MBProgressHUD hideHUDForView:self.view animated:YES];
                 
@@ -228,6 +221,7 @@
                     
                     NSLog(@"%i", [file count]);
                 
+                //Database table is empty
                 if ([[file objectAtIndex:0] isEqualToString: @"empty"]){
                     //Hide Loader
                     [MBProgressHUD hideHUDForView:self.view animated:YES];
@@ -237,16 +231,17 @@
                     //checks if check box is checked
                     [self checked];
                     
+                //Username DNE
                 } else if ([[file objectAtIndex:0] isEqualToString: @"DNE"]){
                     //Hide Loader
                     [MBProgressHUD hideHUDForView:self.view animated:YES];
 
                     [self message:@"Username does not exist"];
                
-                    
                     //checks if check box is checked
                     [self checked];
                     
+                //Valid user information
                 } else if([[file objectAtIndex:0] isEqualToString: @"true"]){
                     //Initializes the array
                     if (global.courseName == nil)
@@ -259,11 +254,10 @@
                         global.files = [[NSMutableArray alloc] init]; 
                         NSLog(@"Allocated");
                     }
-                    
-                    //Stores the files with their respective courses
 
                     int i=1;
                     
+                    //Stores the files with their respective courses
                     while (i<[file count]){
                         if ([[file objectAtIndex:i] isEqualToString: @"course:"]){
                             NSLog(@"Coursetest");
@@ -292,6 +286,7 @@
 
                         i++;
                     }
+                //Username or password is invalid
                 } else if ([[file objectAtIndex:0] isEqualToString: @"false"]){
                     //Hide Loader
                     [MBProgressHUD hideHUDForView:self.view animated:YES];
@@ -315,16 +310,15 @@
         [MBProgressHUD hideHUDForView:self.view animated:YES];
 
         [self message:@"Invalid username or password"];
-
-        
     }
 }
 
-//Saves user default values if the checkbox is checked
+/**
+ * Function to save default user information when the "Remember me" button is clicked
+ **/
 - (void) checked{
     if (isChecked == 1){
-        
-        NSLog(@"YAY");
+
         NSString *usernameField = [username  text];
         NSString *passwordField = [password text];
         NSString *serverField = [servername text];
@@ -337,55 +331,58 @@
         
         //Saves the state of the NSUserDefault values
         [defaultData synchronize];
+        NSLog(@"Default values saved");
     }
 }
 
-//Displays a message according to the outcome
+/**
+ * Displays a message corresponding to the outcome from authenticating
+ **/
 - (void) message: (NSString *) msg{
     UIAlertView *alert1 = [[UIAlertView alloc] initWithTitle:nil message:[NSString stringWithFormat:@"%@",msg] delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil];
-//    [alert1 show];
     
+    //Change test message color
     UILabel *theBody = [alert1 valueForKey:@"_bodyTextLabel"];
     [theBody setTextColor:[UIColor orangeColor]];
     
-    UIImage *theImage = [UIImage imageNamed:@"blank.png"];
-    theImage = [theImage stretchableImageWithLeftCapWidth:16 topCapHeight:16];
-    CGSize theSize = [alert1 frame].size;
-    
-//    UIGraphicsBeginImageContext(theSize);
-//    [theImage drawInRect:CGRectMake(0, 0, theSize.width, theSize.height)];
-//    theImage = UIGraphicsGetImageFromCurrentImageContext();
-//    UIGraphicsEndImageContext();
-    
-   // [[alert1 layer] setContents:[theImage CGImage]];
+    //Adds a background image to the popup message
+//    UIImage *theImage = [UIImage imageNamed:@"blank.png"];
+//    theImage = [theImage stretchableImageWithLeftCapWidth:16 topCapHeight:16];
+//    CGSize theSize = [alert1 frame].size;
     
     //Add image to the alert background
-    UIImageView *backgroundImageView = [[UIImageView alloc] initWithImage:theImage];
-    backgroundImageView.frame = CGRectMake(0, 0, 282, 100);
-    backgroundImageView.contentMode = UIViewContentModeScaleToFill;
-    
-    [alert1 addSubview:backgroundImageView];
-    [alert1 sendSubviewToBack:backgroundImageView];
-    [alert1 show];
+//    UIImageView *backgroundImageView = [[UIImageView alloc] initWithImage:theImage];
+//    backgroundImageView.frame = CGRectMake(0, 0, 282, 100);
+//    backgroundImageView.contentMode = UIViewContentModeScaleToFill;
+//    
+//    [alert1 addSubview:backgroundImageView];
+//    [alert1 sendSubviewToBack:backgroundImageView];
+//    [alert1 show];
 
 }
 
 
 //http://www.iphonedevsdk.com/forum/iphone-sdk-development/2982-2-button-uialertview-button-pressed.html
+/**
+ * Checks whether the user clicked the "OK" or "Cancel" button
+ **/
 - (void)alertView:(UIAlertView *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex {
     // the user clicked one of the OK/Cancel buttons
+    //"OK" button
     if (buttonIndex == 0)
     {
         NSLog(@"button0");
     }
+    //"Cancel" button
     else if(buttonIndex == 1)
     {
         NSLog(@"button1");
     } 
-    else if(buttonIndex == 2)
-    {
-        NSLog(@"button2");
-    }
+    //Used if there are more than 2 buttons
+//    else if(buttonIndex == 2)
+//    {
+//        NSLog(@"button2");
+//    }
 }
 
 - (void)connection:(NSURLConnection *)connection didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge {
@@ -409,7 +406,9 @@
 
 }*/
 
-
+/**
+ * Checks whether there is a change in the wifi connection
+ **/
 -(void)reachabilityChanged:(NSNotification*)note
 {
     Reachability * reach = [note object];
@@ -426,9 +425,11 @@
 
 
 //Links to specified webpage in safari to recover password and username
+/**
+ * Function to open up the page in safari where users can recover their forgotten information through the site.
+ **/
 - (IBAction) recoverpass:(id)sender
 {
-     //[[UIApplication sharedApplication] openURL:[NSURL URLWithString: @"https://password.srv.ualberta.ca"]];
      [[UIApplication sharedApplication] openURL:[NSURL URLWithString: @"http://patrickt.csj.ualberta.ca/moodle/login/index.php"]];
 }
 
@@ -438,8 +439,12 @@
     // Release any retained subviews of the main view.
 }
 
+/**
+ * Allows for screen to autorotate according to the users orientation of their iPhone
+ **/
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
 {
+    //Portrait orientation allowed only
     return (interfaceOrientation == UIInterfaceOrientationPortrait);
     //Use to autorotate when user rotates phone
     //return true;

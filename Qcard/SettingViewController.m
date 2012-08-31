@@ -1,15 +1,20 @@
-//
-//  SettingViewController.m
-//  Qcard
-//
-//  Created by Theodore Pham on 12-03-26.
-//  Copyright (c) 2012 __MyCompanyName__. All rights reserved.
-//
+/**
+ **************************************************************************
+ **                              QCard                                   **
+ **************************************************************************
+ * @package     app                                                      **
+ * @subpackage  N/A                                                      **
+ * @name        QCard                                                    **
+ * @copyright   oohoo.biz                                                **
+ * @link        http://oohoo.biz                                         **
+ * @author      Theodore Pham                                            **
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later **
+ **************************************************************************
+ **************************************************************************/
 
 #import "SettingViewController.h"
 #import "Singleton.h"
 #import "sqlite3.h"
-//#import "CollapsableTableView.h"
 #import "AuthenticateViewController.h"
 
 
@@ -24,13 +29,10 @@
 
 @implementation SettingViewController
 
-
-
 - (void)viewDidLoad {
     [super viewDidLoad];
     Singleton *global = [Singleton globalVar];
 
-    
     NSArray *keys = [global.courseName allKeys];
     id key, value;
     
@@ -39,7 +41,7 @@
         NSLog(@"BreaK");
     }
 
-    
+    //Initialize and allocate memory for array
     listOfItems = [[NSMutableArray alloc] init];
 
     for (int i=0; i < [global.courseName count]; i++){
@@ -52,43 +54,16 @@
         for(int j=0; j < [value count]; j++){
             [courseFiles addObject:[value objectAtIndex:j]];
         }
-        
-//        NSMutableArray *countriesToLiveInArray = [NSMutableArray arrayWithObjects: @"TEST", nil];
-        
-        NSDictionary *countriesToLiveInDict = [NSDictionary dictionaryWithObject:courseFiles forKey:@"CourseFiles"];
-        [listOfItems addObject:countriesToLiveInDict];
+                
+        NSDictionary *courseHeaders = [NSDictionary dictionaryWithObject:courseFiles forKey:@"CourseFiles"];
+        [listOfItems addObject:courseHeaders];
         
         NSLog(@"Key: %@ for values: %@", key, value);
-        
-        
-        
     }
 
 	//Set the title
 	self.navigationItem.title = @"CourseFiles";
 }
-
-
-/*
- - (void)viewWillAppear:(BOOL)animated {
- [super viewWillAppear:animated];
- }
- */
-/*
- - (void)viewDidAppear:(BOOL)animated {
- [super viewDidAppear:animated];
- }
- */
-/*
- - (void)viewWillDisappear:(BOOL)animated {
- [super viewWillDisappear:animated];
- }
- */
-/*
- - (void)viewDidDisappear:(BOOL)animated {
- [super viewDidDisappear:animated];
- }
- */
 
 /*
  // Override to allow orientations other than the default portrait orientation.
@@ -105,13 +80,20 @@
 
 #pragma mark Table view methods
 
+/**
+* This function retrieves the number of table sections
+* Returns the number of sections in the table. (Courses)
+**/
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
     NSLog(@"Number of sections: %i", [listOfItems count]);
 	return [listOfItems count];
 }
 
 
-// Customize the number of rows in the table view.
+/**
+* This function counts the number of subsections and stores it in a 2-D associative array
+* Returns the number of subsections under each section. (Files)
+**/
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
 	
 	//Number of rows it should expect should be based on the section
@@ -120,13 +102,15 @@
 	return [array count];
 }
 
+/**
+ * This function grabs the course name for each section
+ * Returns the array keys which corresponds to the section titles
+ **/
 - (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section {
     Singleton *global = [Singleton globalVar];
 
+    //Grabs all the key in the array which corresponds to the course name
     NSArray *keys = [global.courseName allKeys];
-//    NSLog(@"%@", keys);
-    NSLog(@"Number of keys: %i", [keys count]);
-
     
     for(int i=0; i < [keys count]; i++){
         if (section == i){
@@ -140,14 +124,16 @@
 }
 
 // Customize the appearance of table view cells.
+/**
+ * This function displays the file names under each course section
+ * Returns the cell row
+ **/
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     
     static NSString *CellIdentifier = @"Cell";
     
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
     if (cell == nil) {
-        //Deprecated initWithFrame:CGRectZero
-        //cell = [[UITableViewCell alloc] initWithFrame:CGRectZero reuseIdentifier:CellIdentifier];
         
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
     }
@@ -158,9 +144,8 @@
 	NSDictionary *dictionary = [listOfItems objectAtIndex:indexPath.section];
 	NSArray *array = [dictionary objectForKey:@"CourseFiles"];
 	NSString *cellValue = [array objectAtIndex:indexPath.row];
-    
-    //Deprecated
-//	cell.text = cellValue;
+
+    //Displays the file name for each subsection
     cell.textLabel.text = cellValue;
     
     //Image on the left of the cell
@@ -169,12 +154,18 @@
     return cell;
 }
 
+/**
+ * This function downloads the user selected files for any course. The file name is passed
+ * to a php file on the server which grabs the file content and relays that information back
+ * to the app which stores it in a database and creates a database if it does not exist already.
+ **/
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
 
     //Grabs the stored default value of the server name
     NSUserDefaults *prefs = [NSUserDefaults standardUserDefaults];
     NSString *serverName = [prefs stringForKey:@"server"];
     
+    //Return value
     NSString *rval;
     
     //Grab row number
@@ -183,17 +174,16 @@
     
     //Grab name of cell
     UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
-    NSLog(@"cell text: %@", cell.textLabel.text); 
     
     NSString *url_file = [NSString stringWithFormat:@"https://%@/moodle/mod/qcardloader/infoControl.php?filename=%@&request=app", serverName, cell.textLabel.text];
 
     NSURL *URL_file = [NSURL URLWithString:url_file];
-    
-    NSLog(@"url_file: %@", url_file);
-    
+        
     NSURLRequest *request = [NSURLRequest requestWithURL:URL_file];
     NSURLResponse *response;
     NSError *error = nil;
+    
+    //Bypass certificates for HTTPS pages
     [NSURLRequest setAllowsAnyHTTPSCertificate:YES forHost:[URL_file host]];
     NSData *file_content = [NSURLConnection sendSynchronousRequest:request
                                          returningResponse:&response error:&error];
@@ -216,17 +206,14 @@
             //Contains the return value(file content) 
             rval = [[NSString alloc] initWithData: file_content encoding:NSUTF8StringEncoding];
             NSLog(@"Rval b4: %@", rval);
-            
-//            NSRange wordRange = NSMakeRange(0,1);
-//            NSArray *firstWord = [[rval componentsSeparatedByString:@"#"] subarrayWithRange:wordRange];
-//
-//            NSLog(@"FIrst Word: %@", firstWord);
 
             NSArray *str = [rval componentsSeparatedByString:@"#"];
             NSEnumerator *enumz = [str objectEnumerator];
             
+            //Stores the coursename
             courseName = [enumz nextObject];
             NSLog(@"----------%@",courseName);
+            //Stores the contents of the file
             fileContent = [enumz nextObject];
             NSLog(@"----------%@",fileContent);
             
@@ -234,15 +221,14 @@
             //Checkmarks if user downloaded the file
             cell.accessoryType = UITableViewCellAccessoryCheckmark;
             
-            //Method 2
             // Database variables
             NSString *databaseName;
             NSString *databasePath;
+            
             // Setup some globals
             databaseName = @"test.db";
             NSFileManager *fileManager = [NSFileManager defaultManager];
             
- 
             // Get the path to the documents directory and append the databaseName
             NSArray *documentPaths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
             NSString *documentsDir = [documentPaths objectAtIndex:0];
@@ -266,7 +252,6 @@
                 NSLog(@"DATABASE WRITABLE");
             }
             
-            //Method 1
             sqlite3 *database;
             //Open the database
             int result = sqlite3_open([databasePath UTF8String], &database);
@@ -285,25 +270,16 @@
                 
                 char *errMsg;
                 
-                //Creates table if it does not exist already
+                //Creates a table if it does not exist already
                 const char *sql_stmt = "CREATE TABLE IF NOT EXISTS FILES (ID INTEGER PRIMARY KEY AUTOINCREMENT, COURSENAME TEXT, FILENAME TEXT, CONTENT TEXT, DOWNLOADED NUMERIC)";
-//                  const char *test = "CREATE TABLE IF NOT EXISTS TEST (ID INTEGER PRIMARY KEY AUTOINCREMENT, COURSEID NUMERIC, FILENAME TEXT, CONTENT TEXT, FILESIZE NUMERIC, DOWNLOADED NUMERIC)";
                 
-//                if (sqlite3_exec ( database, test, NULL, NULL, &errMsg) != SQLITE_OK){
-//                    NSLog(@"Failed to create table");
-//                    }
                 if (sqlite3_exec ( database, sql_stmt, NULL, NULL, &errMsg) != SQLITE_OK){
                     NSLog(@"Failed to create table");
                     
                 } else {
-                
-                    //NSString *insertSQL = [NSString stringWithFormat:@"INSERT INTO files(content, id, downloaded, filename, filesize, courseid) VALUES ('%@', '%d', '%d', '%@', '%d', '%d' )", fileContent, 1, NULL, cell.textLabel.text, 1, 1];
                     
-                    //create record inserting string
+                    //Create record inserting string
                     NSString *insertSQL = [NSString stringWithFormat:@"INSERT INTO FILES(ID, COURSENAME, FILENAME, CONTENT, DOWNLOADED) VALUES ('%d', '%@', '%@', '%@', '%d')", NULL, courseName, cell.textLabel.text, fileContent, 1];
-
-                    
-                    NSLog(@"$$$string to insert: %@", insertSQL);
                     
                     const char *sql = [insertSQL UTF8String];
                     sqlite3_stmt *sqlStatement;
@@ -321,10 +297,8 @@
                             sqlite3_finalize(sqlStatement);
                             //close database
                             sqlite3_close(database);
-                            NSLog(@"SQLITE DONE");
                             
                         }
-                        NSLog(@"SQLITE == OK");
                         
                         /*********************Testing data retrieval
                         **********************/
@@ -333,6 +307,7 @@
                         sqlite3_stmt *statement;
                         if (sqlite3_open(dbpath, &database) == SQLITE_OK)
                         {
+                            //Grabs the file content from selected file
                             NSString *querySQL = [NSString stringWithFormat: @"SELECT content FROM files WHERE filename=\"%@\"",     cell.textLabel.text];
                             
                             const char *query_stmt = [querySQL UTF8String];
@@ -363,7 +338,7 @@
                             sqlite3_close(database);
                         }
                         /**********************
-                        *********************/
+                        *********************//*END TEST*/
                     }
                 }
             }//end else
@@ -380,37 +355,9 @@
     
 }
 
-//- (void) saveData{
-//    sqlite3_stmt *statement;
-//    //const char *dbpath = [databasePath UTF8String];
-//    
-//}
-
-/*
-- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-	
-	//Get the selected country
-	
-	NSDictionary *dictionary = [listOfItems objectAtIndex:indexPath.section];
-	NSArray *array = [dictionary objectForKey:@"Countries"];
-	NSString *selectedCountry = [array objectAtIndex:indexPath.row];
-	
-	//Initialize the detail view controller and display it.
-	DetailViewController *dvController = [[DetailViewController alloc] initWithNibName:@"DetailView" bundle:[NSBundle mainBundle]];
-	dvController.selectedCountry = selectedCountry;
-	[self.navigationController pushViewController:dvController animated:YES];
-	//[dvController release];
-	dvController = nil;
-}*/
-
-//Deprecated, use one below
-/*
-- (UITableViewCellAccessoryType)tableView:(UITableView *)tableView accessoryTypeForRowWithIndexPath:(NSIndexPath *)indexPath {
-	
-	//return UITableViewCellAccessoryDetailDisclosureButton;
-	return UITableViewCellAccessoryDisclosureIndicator;
-}*/
-
+/**
+* Displays the files for each course in a table format.
+**/
 - (void)tableView:(UITableView*)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath {
     
     //Image on the right side of the cell, can be customized to represent downloaded and not downloaded yet***
@@ -421,173 +368,11 @@
 //    cell.accessoryType = UITableViewCellAccessoryCheckmark;
 //    cell.accessoryView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"speaker.png"]];
 }
-
-/*
-- (void)tableView:(UITableView *)tableView accessoryButtonTappedForRowWithIndexPath:(NSIndexPath *)indexPath {
-	
-	[self tableView:tableView didSelectRowAtIndexPath:indexPath];
-}*/
-
-/*
- // Override to support conditional editing of the table view.
- - (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath {
- // Return NO if you do not want the specified item to be editable.
- return YES;
- }
- */
-
-
-/*
- // Override to support editing the table view.
- - (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath {
- 
- if (editingStyle == UITableViewCellEditingStyleDelete) {
- // Delete the row from the data source
- [tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:YES];
- }   
- else if (editingStyle == UITableViewCellEditingStyleInsert) {
- // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
- }   
- }
- */
-
-
-/*
- // Override to support rearranging the table view.
- - (void)tableView:(UITableView *)tableView moveRowAtIndexPath:(NSIndexPath *)fromIndexPath toIndexPath:(NSIndexPath *)toIndexPath {
- }
- */
-
-
-/*
- // Override to support conditional rearranging of the table view.
- - (BOOL)tableView:(UITableView *)tableView canMoveRowAtIndexPath:(NSIndexPath *)indexPath {
- // Return NO if you do not want the item to be re-orderable.
- return YES;
- }
- */
-
-/*
-- (void)dealloc {
-	
-	[listOfItems release];
-    [super dealloc];
-}
-*/
-
-
-
-
 - (void)viewDidUnload
 {
     [super viewDidUnload];
     // Release any retained subviews of the main view.
 }
 
-
-
-
-
-
-
-
-
-/*
-@synthesize blockLabel, notificationLabel, wifiLabel;
-
-- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
-{
-    self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
-    if (self) {
-        // Custom initialization
-    }
-    return self;
-}
-
-- (void)viewDidLoad
-{
-    [super viewDidLoad];
-	// Do any additional setup after loading the view.
-    
-    // BACKGROUND IMAGE
-	self.view.backgroundColor = [[UIColor alloc] initWithPatternImage:[UIImage imageNamed:@"background.png"]];
-    
-    [[NSNotificationCenter defaultCenter] addObserver:self 
-                                             selector:@selector(reachabilityChanged:) 
-                                                 name:kReachabilityChangedNotification 
-                                               object:nil];
-
-    
-    Reachability * reach = [Reachability reachabilityWithHostname:@"www.moodle.org"];
-    
-    reach.reachableBlock = ^(Reachability * reachability)
-    {
-        dispatch_async(dispatch_get_main_queue(), ^{
-            blockLabel.text = @"Block Says Reachable";
-
-        });
-    };
-    
-    reach.unreachableBlock = ^(Reachability * reachability)
-    {
-        dispatch_async(dispatch_get_main_queue(), ^{
-            blockLabel.text = @"Block Says Unreachable";
-        });
-    };
-    
-    [reach startNotifier];
-    
-    Reachability * wifi = [Reachability reachabilityForInternetConnection];
-    
-    NetworkStatus remoteHostStatus = [wifi currentReachabilityStatus];
-    
-    //Checks for wifi or 3g connections
-    if(remoteHostStatus == NotReachable) {
-        NSLog(@"no"); wifiLabel.text = @"Wifi: DISCONNECTED!";
-   
-        //Sets image for no wifi
-        UIImage *img = [UIImage imageNamed:@"oohoo1.png"];
-        [imageView setImage:img];
-        
-    } else if (remoteHostStatus == ReachableViaWiFi) {
-        NSLog(@"wifi"); wifiLabel.text = @"Wifi: CONNECTED!";
-        
-        //Sets image for wifi
-        UIImage *img = [UIImage imageNamed:@"oohoo.png"];
-        [imageView setImage:img];
-        
-    } else if (remoteHostStatus == ReachableViaWWAN) {
-        NSLog(@"cell"); wifiLabel.text = @"No 3G"; 
-    }
-   
-    [wifi startNotifier];
-    
-}
-
-- (void)viewDidUnload
-{
-    [super viewDidUnload];
-    // Release any retained subviews of the main view.
-}
-
-- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
-{
-    return (interfaceOrientation == UIInterfaceOrientationPortrait);
-}
-
--(void)reachabilityChanged:(NSNotification*)note
-{
-    Reachability * reach = [note object];
-    
-    if([reach isReachable])
-    {
-        notificationLabel.text = @"Notification Says Reachable";
-    }
-    else
-    {
-        notificationLabel.text = @"Notification Says Unreachable";
-    }
-}
- */
 
 @end

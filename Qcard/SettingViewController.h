@@ -1,10 +1,16 @@
-//
-//  SettingViewController.h
-//  Qcard
-//
-//  Created by Theodore Pham on 12-03-26.
-//  Copyright (c) 2012 __MyCompanyName__. All rights reserved.
-//
+/**
+ **************************************************************************
+ **                              QCard                                   **
+ **************************************************************************
+ * @package     app                                                      **
+ * @subpackage  N/A                                                      **
+ * @name        QCard                                                    **
+ * @copyright   oohoo.biz                                                **
+ * @link        http://oohoo.biz                                         **
+ * @author      Theodore Pham                                            **
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later **
+ **************************************************************************
+ **************************************************************************/
 
 #import <UIKit/UIKit.h>
 
@@ -14,14 +20,8 @@
 @interface SettingViewController : UIViewController{
     
     NSMutableArray *listOfItems;
-    //IBOutlet UIImageView * imageView;
     
 }
-/*
-@property (assign, nonatomic) IBOutlet UILabel * blockLabel;
-@property (assign, nonatomic) IBOutlet UILabel * notificationLabel;
-@property (assign, nonatomic) IBOutlet UILabel * wifiLabel;
-*/
-//@property (assign, nonatomic) IBOutlet UIImageView * image;
+
 
 @end

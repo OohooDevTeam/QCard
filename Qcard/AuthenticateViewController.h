@@ -1,10 +1,16 @@
-//
-//  AuthenticateViewController.h
-//  Qcard
-//
-//  Created by Theodore Pham on 12-05-29.
-//  Copyright (c) 2012 __MyCompanyName__. All rights reserved.
-//
+/**
+ **************************************************************************
+ **                              QCard                                   **
+ **************************************************************************
+ * @package     app                                                      **
+ * @subpackage  N/A                                                      **
+ * @name        QCard                                                    **
+ * @copyright   oohoo.biz                                                **
+ * @link        http://oohoo.biz                                         **
+ * @author      Theodore Pham                                            **
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later **
+ **************************************************************************
+ **************************************************************************/
 
 #import <UIKit/UIKit.h>
 
@@ -22,8 +28,6 @@
     
     IBOutlet UIButton *checkBox;
     BOOL isChecked;
-    //IBOutlet UIActivityIndicatorView *loader;
-    //NSMutableData *webData;
 
 }
 
@@ -35,9 +39,6 @@
 @property (nonatomic, retain) UIButton *checkBox;
 
 @property (nonatomic, assign) BOOL isChecked;
-//@property (nonatomic, retain) UIActivityIndicatorView *loader;
-
-//@property(nonatomic, retain) NSMutableData *webData;
 
 - (IBAction) authenticate: (id) sender;
 - (IBAction) recoverpass: (id) sender;

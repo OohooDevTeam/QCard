@@ -1,11 +1,16 @@
-//
-//  Singleton.h
-//  Qcard
-//
-//  Created by Theodore Pham on 12-04-02.
-//  Copyright (c) 2012 __MyCompanyName__. All rights reserved.
-//
-//Contains all the shared global variables of each view
+/**
+ **************************************************************************
+ **                              QCard                                   **
+ **************************************************************************
+ * @package     app                                                      **
+ * @subpackage  N/A                                                      **
+ * @name        QCard                                                    **
+ * @copyright   oohoo.biz                                                **
+ * @link        http://oohoo.biz                                         **
+ * @author      Theodore Pham                                            **
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later **
+ **************************************************************************
+ **************************************************************************/
 
 //http://derekneely.com/2009/11/iphone-development-global-variables/
 
@@ -13,32 +18,31 @@
 
 @interface Singleton : UIViewController{
     
-    //SuperMemo algorithm
-    
-    //old easiness factor
-//    NSDecimalNumber *EF_prime;
+    //SuperMemo algorithm variables
+    //Old easiness factor
     double EF_prime;
     
-    //new easiness factor
-//    NSDecimalNumber *EF;
+    //New easiness factor
     double EF;
     
     //Words needing reviewing
     NSMutableArray *troubledWords;
     NSMutableArray *troubledAnswers;
+    
     //Initial words
     NSMutableArray *initialWords;
     NSMutableArray *initialAnswers;
+    
     //Have no trouble with
     NSMutableArray *easyWords;
-    //Skipped words
+    
+    //Skipped words and answers
     NSMutableArray *skippedWords;
     NSMutableArray *skippedAnswers;
     
     //AnswerView
     NSMutableArray *answerArray;
     int index;
-//    NSMutableArray *wrongAnswers;
     
     //AuthenticateView
     //Hash Table
@@ -47,6 +51,7 @@
     
     //Total number of elements (words)
     NSUInteger elements;
+    
     //Current array index
     NSUInteger array_index;
     
@@ -54,13 +59,12 @@
     BOOL skipped_round;
     BOOL incorrect_round;
     
+    //Server to connect to and download files
     NSString *serverName;
     
 }
 
-//SuperMemo 
-//@property (nonatomic, retain) NSDecimalNumber *EF_prime;
-//@property (nonatomic, retain) NSDecimalNumber *EF;
+//Property declaration
 @property (nonatomic, retain) NSMutableArray *troubledWords;
 @property (nonatomic, retain) NSMutableArray *initialWords;
 @property (nonatomic, retain) NSMutableArray *easyWords;
@@ -69,12 +73,9 @@
 @property (nonatomic, retain) NSMutableArray *initialAnswers;
 @property (nonatomic, retain) NSMutableArray *skippedAnswers;
 
-
-
 //AnswerView
 @property (nonatomic, retain) NSMutableArray *answerArray;
 @property (nonatomic) int index;
-//@property (nonatomic, retain) NSMutableArray *wrongAnswer;
 
 //AuthenticateView
 @property (nonatomic, retain) NSMutableDictionary *courseName;
@@ -89,7 +90,7 @@
 
 @property (nonatomic, copy) NSString *serverName;
 
-//Global var
+//Global variable
 + (Singleton *) globalVar;
 
 @end

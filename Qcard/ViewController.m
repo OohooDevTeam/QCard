@@ -1,10 +1,17 @@
-//
-//  ViewController.m
-//  Qcard
-//
-//  Created by Theodore Pham on 12-03-21.
-//  Copyright (c) 2012 __MyCompanyName__. All rights reserved.
-//
+/**
+ **************************************************************************
+ **                              QCard                                   **
+ **************************************************************************
+ * @package     app                                                      **
+ * @subpackage  N/A                                                      **
+ * @name        QCard                                                    **
+ * @copyright   oohoo.biz                                                **
+ * @link        http://oohoo.biz                                         **
+ * @author      Theodore Pham                                            **
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later **
+ **************************************************************************
+ **************************************************************************/
+
 //  ViewController.m
 //  OpenEarsSampleApp
 //
@@ -48,9 +55,6 @@
 #import "sqlite3.h"
 
 @implementation ViewController
-
-//@synthesize j;
-//@synthesize target;
 
 @synthesize pocketsphinxController;
 @synthesize fliteController;
@@ -142,7 +146,6 @@
     global.incorrect_round = FALSE;
 
     
-    //NSData *dbFile = [[NSData alloc] initWithContentsOfURL:[NSURL URLWithString:@"http://www.someurl.com/DatabaseName.sqlite"]];
     NSData *dbFile = [[NSData alloc] initWithContentsOfURL:[NSURL URLWithString:@"https://github.com/ccgus/fmdb/blob/master/src/FMDatabase.h"]];
     NSString *resourceDocPath = [[NSString alloc] initWithString:[[[[NSBundle mainBundle]  resourcePath] stringByDeletingLastPathComponent] stringByAppendingPathComponent:@"Documents"]];
     
@@ -157,13 +160,12 @@
     
     //********************
     
-
     NSString *stored_display;
     NSString *stored_answer;
     
-    //display
+    //Stores word to be displayed
     target = [[NSMutableArray alloc]init];
-    //answer
+    //Stores corresponding answers to the words
     target2 = [[NSMutableArray alloc]init];
     
     x_right = 0;
@@ -175,19 +177,20 @@
     /*********************Testing data retrieval
      **********************/
     NSError *error1 = nil;
-    //Method 2
+
     // Database variables
     NSString *databaseName;
     NSString *databasePath;
+    
     // Setup some globals
     databaseName = @"test.db";
     NSFileManager *fileManager = [NSFileManager defaultManager];
-    
     
     // Get the path to the documents directory and append the databaseName
     NSArray *documentPaths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
     NSString *documentsDir = [documentPaths objectAtIndex:0];
     databasePath = [documentsDir stringByAppendingPathComponent:databaseName];
+    
     NSLog(@"DatabasePath: %@", databasePath);
     
     //Checks if file exists at this path
@@ -195,6 +198,7 @@
     
     if(!exist){
         NSLog(@"DATABASE NOT WRITABLE");
+        
         NSString *bundle_path = [[NSBundle mainBundle] pathForResource:@"test" ofType:@"db"];
         //Copy path
         exist = [fileManager copyItemAtPath:bundle_path toPath:databasePath error:&error1];
@@ -207,8 +211,6 @@
         NSLog(@"DATABASE WRITABLE");
     }
     
-    
-    //Method 1
     sqlite3 *database;
     NSString *string;
     //Open the database
@@ -217,12 +219,12 @@
     
     //Database failed to open or DNE
     if(result != SQLITE_OK){
-        //Closes database
+        //Close database
         sqlite3_close(database);
         
         NSLog(@"DATABASE FAILED TO OPEN");
         
-        //Successfully opened database
+    //Successfully opened database
     } else {
         
         const char *dbpath = [databasePath UTF8String];
@@ -232,7 +234,6 @@
 //            NSString *querySQL = [NSString stringWithFormat: @"SELECT content FROM files WHERE filename=\"%@\"", cell.textLabel.text];
             NSString *querySQL = [NSString stringWithFormat: @"SELECT content FROM files WHERE filename=\"3443.txt\""];
 
-            
             const char *query_stmt = [querySQL UTF8String];
             
             if (sqlite3_prepare_v2(database, query_stmt, -1, &statement, NULL) == SQLITE_OK)
@@ -242,10 +243,12 @@
                     NSString *content = [[NSString alloc] initWithUTF8String:(const char *) sqlite3_column_text(statement, 0)];
                     
                     string = content;
-                    NSLog(@"PROBABILITY 1000");
                     
+                    /*!!!FOR TESTING PURPOSES TO SEE IF DATA IS RETRIEVED PROPERLY!!!*/
+                    //Displays the file content
                     UIAlertView *alert1 = [[UIAlertView alloc] initWithTitle:nil message:[NSString stringWithFormat:@"Content string is: %@ ", string]delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil];
                     [alert1 show];
+                    /*!!!*/
                     
                 } else {
                     NSLog(@"No content found!");
@@ -256,16 +259,14 @@
         }
     }
     /**********************
-     *********************/
-    
-//    NSString *path = [[NSBundle mainBundle] pathForResource:@"8109" ofType:@"txt"];
-//    NSString *string = [[NSString alloc] initWithContentsOfFile:path encoding:NSASCIIStringEncoding error:NULL];
-    
+     *********************///End of data retrieval
+    //Parse the string
     NSArray *lines = [string componentsSeparatedByString:@"\n"]; // each line, adjust character for line endings
     
     NSEnumerator *nse = [lines objectEnumerator];
     NSString *tmp;
     
+    //Call to initializes all global arrays
     [self initialize_global_arrays];
     
     //Read the file and parse each line and stores the word
@@ -275,7 +276,6 @@
         NSArray *chunks = [tmp componentsSeparatedByString: @"/"];
         //Iterates through the array
         NSEnumerator *nse2 = [chunks objectEnumerator];
- 
         
         stored_display = [nse2 nextObject];
         NSLog(@"----------%@, %d",stored_display,stored_display.length);
@@ -420,7 +420,7 @@
 	
     // Next, an informative message.
     
-	NSLog(@"\n\nWelcome to the OpenEars sample project. This project understands the words:\nBACKWARD,\nCHANGE,\nFORWARD,\nGO,\nLEFT,\nMODEL,\nRIGHT,\nTURN,\nand if you say \"CHANGE MODEL\" it will switch to its dynamically-generated model which understands the words:\nCHANGE,\nMODEL,\nMONDAY,\nTUESDAY,\nWEDNESDAY,\nTHURSDAY,\nFRIDAY,\nSATURDAY,\nSUNDAY,\nQUIDNUNC");
+//	NSLog(@"\n\nWelcome to the OpenEars sample project. This project understands the words:\nBACKWARD,\nCHANGE,\nFORWARD,\nGO,\nLEFT,\nMODEL,\nRIGHT,\nTURN,\nand if you say \"CHANGE MODEL\" it will switch to its dynamically-generated model which understands the words:\nCHANGE,\nMODEL,\nMONDAY,\nTUESDAY,\nWEDNESDAY,\nTHURSDAY,\nFRIDAY,\nSATURDAY,\nSUNDAY,\nQUIDNUNC");
 	
 	// This is how to start the continuous listening loop of an available instance of PocketsphinxController. We won't do this if the language generation failed since it will be listening for a command to change over to the generated language.
 	if(dynamicLanguageGenerationResultsDictionary) {
@@ -459,9 +459,6 @@
 	self.suspendListeningButton.hidden = TRUE;
 	self.resumeListeningButton.hidden = TRUE;
     
-    
-    
- 
 }
 
 
@@ -481,12 +478,13 @@
     
 }
 
-//Allows user to pass on to the next word
+/**
+ * Allows users to skip the current word
+ **/
 - (IBAction) Pass:(id)sender
 {
     Singleton *global = [Singleton globalVar];
     int p = [global.answerArray count];
-//    int p = [global.skippedAnswers count];
 
     NSLog(@"p = %d", p);
     NSLog(@"j = %d", j);
@@ -517,12 +515,12 @@
         if (global.initial_round == TRUE){
             //Prints out next word
             NSLog(@"value of j: %d", j);
-//            j++;
-//            global.index = j;
-
-            [self performSelectorOnMainThread:@selector(Word:) withObject:[global.skippedWords objectAtIndex:j]waitUntilDone:NO];
             j++;
             global.index = j;
+
+            [self performSelectorOnMainThread:@selector(Word:) withObject:[global.skippedWords objectAtIndex:j]waitUntilDone:NO];
+//            j++;
+//            global.index = j;
             NSLog(@"value of j: %d", j);
             NSLog(@"value of gindex: %d", global.index);
             
@@ -581,7 +579,9 @@
     }//end outer else
 }
 
-//Displays if word was said correctly
+/**
+ * Displays if the word was said correctly or not
+ **/
 -(void) Correctness: (NSString*) correctness
 {
     //Another way to display text
@@ -628,7 +628,9 @@
     [alert1 show];
 }
 
-//Sets the iamges back to blank
+/**
+ * Resets the images that have been marked with an "X"
+ **/
 - (void) resetImage {
     UIImage *img1 = [UIImage imageNamed:@"blank.png"];
     [imageView1 setImage:img1];
@@ -638,7 +640,9 @@
     [imageView3 setImage:img3];
 }
 
-//Displays message according to number of wrongs user obtains
+/**
+ * Displays message according to number of wrongs user obtains
+ **/
 - (void) wrong_answer_message: (NSString *) trim{
     
     Singleton *global = [Singleton globalVar];
@@ -666,8 +670,6 @@
 //        [global.troubledWords addObject:[global.answerArray objectAtIndex:j]];    
         [global.troubledWords addObject:trim];    
 
-        
-        
         printf("&&&&&&&&&&&&%d&&&&&&&&&&&&&&\n", x);
         
         int p = [global.answerArray count];
@@ -690,7 +692,7 @@
             }
 
             
-        //Prepare for the next one
+        //Prepare for the next card
         } else {
             j++;
             
@@ -711,6 +713,9 @@
     } 
 }
 
+/**
+ * Checks which words are still unanswered or incorrect
+ **/
 - (void) check_any_skipped_or_incorrect_words_left{
     
     Singleton *global = [Singleton globalVar];
@@ -730,14 +735,18 @@
 
 ////////////////////////////////////////////////////////////////////////////////////////////
 
-//Displays the ratio of correct and incorrect answers
+/**
+ * Displays the ratio of correct and incorrect answers
+**/
 - (void) display_number_of_correct_and_incorrect_answers{
     
     lblRIGHT.text = [NSString stringWithFormat:@"%g",x_right];
     lblWRONG.text = [NSString stringWithFormat:@"%g",x_wrong];
 }
 
-//Initalize all global arrays
+/**
+ * Initalize all global arrays
+**/
 - (void) initialize_global_arrays{
     
     Singleton *global = [Singleton globalVar];
@@ -776,7 +785,9 @@
     }
 }
 
-//Analyzes what the user said and evaluates accordingly
+/**
+ * Analyzes what the user said and evaluates accordingly
+**/
 - (void) analyze_input: (NSString *) trim withb: (NSString *) trim2{
     Singleton *global = [Singleton globalVar];
     
@@ -843,13 +854,18 @@
     
 }
 
-
+/**
+ * Enables the buttons to pass, peek, or start
+ **/
 - (void) enableButtons{
     Pass.enabled = YES;
     Peek.enabled = YES;
     startButton.enabled = YES;
 }
 
+/**
+ * Disables the buttons to pass, peek, or start
+ **/
 -(void) disableButtons{
     Pass.enabled = NO;
     Peek.enabled = NO;
@@ -911,7 +927,6 @@
     Singleton *global = [Singleton globalVar];
     
     NSMutableArray *test;
-
     
     //Change up the arrays to accomodate the skipped and incorrect words
     if (global.initial_round){
@@ -1147,46 +1162,11 @@
 #pragma mark -
 #pragma mark UI
 
-// This is not OpenEars-specific stuff, just some UI behavior
-/*
-- (IBAction) suspendListeningButtonAction { // This is the action for the button which suspends listening without ending the recognition loop
-	[self.pocketsphinxController suspendRecognition];	
-	
-	self.startButton.hidden = TRUE;
-	self.stopButton.hidden = FALSE;
-	self.suspendListeningButton.hidden = TRUE;
-	self.resumeListeningButton.hidden = FALSE;
-    
-    //Disables button on pause
-    [Pass setEnabled:FALSE];
-    [buttonANSWER setEnabled:FALSE];
-}
 
-- (IBAction) resumeListeningButtonAction { // This is the action for the button which resumes listening if it has been suspended
-	[self.pocketsphinxController resumeRecognition];
-	
-	self.startButton.hidden = TRUE;
-	self.stopButton.hidden = FALSE;
-	self.suspendListeningButton.hidden = FALSE;
-	self.resumeListeningButton.hidden = TRUE;	
-    
-    //Enables button on resume
-    [Pass setEnabled:TRUE];
-    [buttonANSWER setEnabled:TRUE];
-}
-
-- (IBAction) stopButtonAction { // This is the action for the button which shuts down the recognition loop.
-	[self.pocketsphinxController stopListening];
-	
-	self.startButton.hidden = FALSE;
-	self.stopButton.hidden = TRUE;
-	self.suspendListeningButton.hidden = TRUE;
-	self.resumeListeningButton.hidden = TRUE;
-}
- */
-
+/**
+ * When user clicks the mic, the program will either pause or resume
+ **/
 - (IBAction) startButtonAction { // This is the action for the button which starts up the recognition loop again if it has been shut down.
-	//[self.pocketsphinxController startListeningWithLanguageModelAtPath:self.pathToGrammarToStartAppWith dictionaryAtPath:self.pathToDictionaryToStartAppWith languageModelIsJSGF:FALSE];
     
     if(isPaused){
         [startButton setImage:[UIImage imageNamed:@"microphone-128.png"] forState:UIControlStateNormal];
@@ -1199,12 +1179,11 @@
         [self.pocketsphinxController suspendRecognition];	
         isPaused = TRUE;
     }
-	//self.startButton.hidden = TRUE;
-	//self.stopButton.hidden = FALSE;
-	//self.suspendListeningButton.hidden = FALSE;
-	//self.resumeListeningButton.hidden = TRUE;
 }
 
+/**
+ * Mutes the voice when the user clicks on the volume button and changes the images as well
+ **/
 - (IBAction) muteVoice {
     
     if(isEnabled){
@@ -1261,9 +1240,9 @@
 }
 
 
-
-
-//Changing views
+/**
+ * When the peek button is clicked, the view will switch so that the user will be able to see the answer
+ **/
 -(IBAction)switch2answer {
     /*
     AnswerViewController *answer = [[AnswerViewController alloc] initWithNibName:@"AnswerViewController" bundle:nil];
