@@ -5,7 +5,7 @@ Description:
     This app allows students to practice learning new words from their course exercises which have been uploaded by professor.
 
 Prequisites:
-    Need professors to install qcardloader and upload files 
+    Need professors to install qcardloader and upload files. Requires Xcode version 4.3+ to test on a mac/macbook (mainly for storybaord view). 
 
 Installation:
     Download from the App Store
